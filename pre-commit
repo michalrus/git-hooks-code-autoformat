@@ -1,6 +1,6 @@
 #!/bin/sh
 
-find . -iname '*.xml' -not -empty |
+git diff --name-only --cached | grep -Ei '\.xml$' |
 {
   abort=0
 
@@ -14,6 +14,7 @@ find . -iname '*.xml' -not -empty |
       cat "$tmp" > "$orig"
     fi
     rm "$tmp"
+    git add "$orig"
   done
 
   exit $abort
