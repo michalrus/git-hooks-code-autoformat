@@ -1,0 +1,20 @@
+#!/bin/sh
+
+find . -iname '*.xml' -not -empty |
+{
+  abort=0
+
+  while read orig ; do
+    tmp=$(mktemp)
+    xmllint --format "$orig" >"$tmp" 2>/dev/null
+    if [ $? -ne 0 ] ; then
+      echo '`xmllint --format` failed for:' "${orig}" >&2
+      abort=1
+    else
+      cat "$tmp" > "$orig"
+    fi
+    rm "$tmp"
+  done
+
+  exit $abort
+}
