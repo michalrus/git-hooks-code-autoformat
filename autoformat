@@ -20,4 +20,5 @@ xmlfmt() {
 xmlfmt "$1"
 sed -r 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
 sed -r 's/<([^>]*)branch="folded"([^>]*)>/<\1\2>/ig'    -i "$1"
+[ "$(basename "$1")" = "meta.xml" ] && sed -r 's/<([XY])>[0-9]+<\/\1>/<\1>0<\/\1>/g' -i "$1"
 xmlfmt "$1"
