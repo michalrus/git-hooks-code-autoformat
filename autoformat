@@ -1,0 +1,23 @@
+#!/bin/sh
+
+[ -f "$1" ] || {
+  echo "$1: no such file"
+  exit 1
+}
+
+xmlfmt() {
+  local tmp="$(mktemp)"
+  xmllint --format "$1" >"$tmp" 2>/dev/null
+  if [ $? -ne 0 ] ; then
+    echo 'fatal: `xmllint --format` failed for:' "$1" >&2
+    exit 1
+  else
+    cat "$tmp" > "$1"
+  fi
+  rm "$tmp"
+}
+
+xmlfmt "$1"
+sed -r 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
+sed -r 's/<([^>]*)branch="folded"([^>]*)>/<\1\2>/ig'    -i "$1"
+xmlfmt "$1"

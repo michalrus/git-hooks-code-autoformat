@@ -1,19 +1,13 @@
 #!/bin/sh
 
+owndir="$(dirname "$(readlink -f "$0")")"
+
 git diff --name-only --cached | grep -Ei '\.xml$' |
 {
   abort=0
 
   while read orig ; do
-    tmp=$(mktemp)
-    xmllint --format "$orig" >"$tmp" 2>/dev/null
-    if [ $? -ne 0 ] ; then
-      echo '`xmllint --format` failed for:' "${orig}" >&2
-      abort=1
-    else
-      cat "$tmp" > "$orig"
-    fi
-    rm "$tmp"
+    "$owndir"/autoformat "$orig" || abort=1
     git add "$orig"
   done
 
