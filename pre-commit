@@ -2,4 +2,25 @@
 
 owndir="$(dirname "$(readlink -f "$0")")"
 
-find "$owndir" -mindepth 2 -executable -name 'pre-commit' | while read hook ; do "$hook" ; done
+find "$owndir"/autoformat -type f -executable | {
+  abort=0
+
+  while read formatter ; do
+    patterns="$formatter".patterns
+    [ -f "$patterns" ] || continue
+
+    git diff --name-only --cached | grep -Eif "$patterns" | {
+      labort=0
+
+      while read orig ; do
+        orig="$(git rev-parse --show-toplevel)/${orig}"
+        "$formatter" "$orig" || labort=1
+        git add "$orig"
+      done
+
+      exit $labort
+    } || abort=1
+  done
+
+  exit $abort
+}
