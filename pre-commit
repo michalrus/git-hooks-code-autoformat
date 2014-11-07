@@ -1,5 +1,8 @@
 #!/bin/sh
 
+root="$(git rev-parse --show-toplevel)"
+[ -d "$root" ] || exit 1
+
 owndir="$(dirname "$(readlink -f "$0")")"
 
 find "$owndir"/autoformat -type f -executable | {
@@ -13,7 +16,7 @@ find "$owndir"/autoformat -type f -executable | {
       labort=0
 
       while read orig ; do
-        orig="$(git rev-parse --show-toplevel)/${orig}"
+        orig="${root}/${orig}"
         "$formatter" "$orig" || labort=1
         git add "$orig"
       done
