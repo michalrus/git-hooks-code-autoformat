@@ -2,14 +2,35 @@
 
 owndir="$(dirname "$(readlink -f "$0")")"
 
-"$owndir"/xml "$1"
+echo "$1" | grep -qEi '\.xmind/(Thumbnails|Revisions)/' && rm "$1" && exit
 
-sed -r 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
-sed -r 's/<([^>]*)branch="folded"([^>]*)>/<\1\2>/ig'    -i "$1"
+echo "$1" | grep -qEi '\.xml$' && {
+  "$owndir"/xml "$1"
 
-[ "$(basename "$1")" = "meta.xml" ] && {
-  sed -r 's/<([XY])>[0-9]+<\/\1>/<\1>0<\/\1>/g' -i "$1"
-  sed -r '/<Version>.*<\/Version>/ d' -i "$1"
+  [ "$(basename "$1")" = "content.xml" ] && {
+    sed -r 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
+    sed -r 's/<([^>]*)branch="folded"([^>]*)>/<\1\2>/ig'    -i "$1"
+  }
+
+  [ "$(basename "$1")" = "meta.xml" ] && {
+    sed -r 's/<([XY])>[0-9]+<\/\1>/<\1>0<\/\1>/g' -i "$1"
+    sed -r '/<Version>.*<\/Version>/ d' -i "$1"
+
+    sed -r '/<Configurations\/>/ d' -i "$1"
+
+    grep -qE '<AutoRevisionGeneration>No</AutoRevisionGeneration>' "$1" || {
+      grep -qE '<AutoRevisionGeneration>' "$1" && sed -r 's/^.*<AutoRevisionGeneration>.*$/<AutoRevisionGeneration>No<\/AutoRevisionGeneration>/g' -i "$1" || {
+        grep -qE '<Configurations>' "$1" && sed -r '/<Configurations>/ a <AutoRevisionGeneration>No</AutoRevisionGeneration>' -i "$1" || {
+          sed -r '/<\/meta>/ i <Configurations><AutoRevisionGeneration>No</AutoRevisionGeneration></Configurations>' -i "$1"
+        }
+      }
+    }
+  }
+
+  [ "$(basename "$1")" = "manifest.xml" ] && {
+    sed -r '/full-path="Revisions\// d' -i "$1"
+    sed -r '/full-path="Thumbnails\// d' -i "$1"
+  }
+
+  "$owndir"/xml "$1"
 }
-
-"$owndir"/xml "$1"
