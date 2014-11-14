@@ -17,6 +17,7 @@ find "$owndir"/autoformat -type f -executable | {
 
       while read orig ; do
         orig="${root}/${orig}"
+        [ -f "$orig" ] || continue
         "$formatter" "$orig" || labort=1
         git add "$orig"
       done
