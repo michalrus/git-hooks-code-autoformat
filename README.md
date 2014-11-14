@@ -31,6 +31,8 @@ The usual workflow then is:
 
 Now, for each staged ("git-added") file, an autoformatter will be called, and then the file will be re-added, and only then the `git commit` will continue. This might create a problem, see [Known problems](#known-problems) below.
 
+If an error occurs (e.g. trying to format a not so well-formed XML), an error message is printed and the commit is aborted.
+
 [Existing formatters](/autoformat)
 -------------------
 
@@ -43,6 +45,7 @@ Adding your own formatters
 1. Take a look at the existing formatters above.
 2. Create `autoformat/NAME.patterns` file containing a regular expressions—1 per line—matching all file names to be treated with your `NAME` formatter.
 3. Create `autoformat/NAME` executable script. It might be called several times, but always with one argument, an absolute path to a file to format. When formatting, you've got to **modify this file in place**.
+4. If you want to abort the commit, print an error message and exit from the formatter with a non-zero exit code.
 
 Known problems
 --------------
