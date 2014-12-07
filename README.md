@@ -36,7 +36,7 @@ If an error occurs (e.g. trying to format a not so well-formed XML), an error me
 [Existing formatters](/autoformat)
 -------------------
 
-* [XML](/autoformat/xml) ← will format [`*.xml` and `*.bmml`](/autoformat/xml.patterns) (Balsamiq Mockups) files,
+* [XML](/autoformat/xml) ← will format [`*.xml`, `*.bmml` and `*.owl`](/autoformat/xml.patterns) (Balsamiq Mockups, Protégé) files,
 * [XMind](/autoformat/xmind) ← will format [`*.xmind/**.xml`](/autoformat/xmind.patterns) files (an `*.xmind` file is really a ZIP archive and **should be extracted**—and autoformatted—before being added to VCS; you can then open a mindmap using `$ XMind some/directory.xmind` and it will then be added to the recently opened maps list).
 
 Adding your own formatters
