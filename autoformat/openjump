@@ -1,0 +1,35 @@
+#!/bin/sh
+
+root="$(git rev-parse --show-toplevel)"
+[ -d "$root" ] || exit 1
+
+owndir="$(dirname "$(readlink -f "$0")")"
+
+beginswith() { case "$2" in "$1"*) true;; *) false;; esac; }
+checkfile() {
+  beginswith "$root/" "$1" || [ -f "$root/$1" ]
+}
+
+"$owndir"/xml "$1"
+
+# check all referenced files
+{
+  cat "$1" | grep -A1 -F '<key class="javax.xml.namespace.QName">Project File</key>' | grep -F '<value class="java.lang.String">' | sed -r 's/^.*>(.*)<.*$/\1/'
+  cat "$1" | grep -A1 -F '<key class="java.lang.String">File</key>'                  | grep -F '<value class="java.lang.String">' | sed -r 's/^.*>(.*)<.*$/\1/'
+  cat "$1" | grep -F '<query>' | grep -F '</query>'                                                                               | sed -r 's/^.*>(.*)<.*$/\1/'
+} | {
+  failed=0
+  while IFS= read -r file ; do
+    checkfile "$file" || {
+      echo >&2 "openjump: \`$1' references a file that is not under the git root: \`$file'"
+      failed=1
+    }
+  done
+  exit $failed
+} || exit 1
+
+# remove $root from the file
+
+sed -i "$1" -e 's/'"$(echo "$root/" | sed -e 's/[]\/$*.^|[]/\\&/g')"'/.\//g'
+
+"$owndir"/xml "$1"
