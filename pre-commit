@@ -28,7 +28,9 @@ find "$owndir"/autoformat -type f -executable | {
 
         # file’s libmagic output matches
         match_magic=''
-        [ $match_pattern ] || [ -f "$magic" ] && file "$orig" | grep -Eqif "$magic" && match_magic='1'
+        [ $match_pattern ] || {
+          [ -f "$magic" ] && file "$orig" | grep -Eqif "$magic" && match_magic='1'
+        }
 
         # if none, ignore
         [ "$match_pattern" -o "$match_magic" ] ||  continue
