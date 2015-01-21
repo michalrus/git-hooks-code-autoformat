@@ -32,4 +32,11 @@ checkfile() {
 
 sed -i "$1" -e 's/'"$(echo "$root/" | sed -e 's/[]\/$*.^|[]/\\&/g')"'/.\//g'
 
+sed -r '/<windowLocation / d' -i "$1"
+sed -r '/<windowSize / d' -i "$1"
+sed -r '/<windowZoom / d' -i "$1"
+sed -r '/<maximized>(true|false)<\/maximized>/ d' -i "$1"
+sed -r 's/<([^>]*)editable="(true|false)"([^>]*)>/<\1\3>/ig' -i "$1"
+sed -r 's/<([^>]*)selectable="(true|false)"([^>]*)>/<\1\3>/ig' -i "$1"
+
 "$owndir"/xml "$1"
