@@ -36,7 +36,7 @@ If an error occurs (e.g. trying to format a not so well-formed XML), an error me
 [Existing formatters](/autoformat)
 -------------------
 
-* [XML](/autoformat/xml) ← will format [`*.xml`, `*.bmml` and `*.owl`](/autoformat/xml.patterns) (Balsamiq Mockups, Protégé) files,
+* [XML](/autoformat/xml) ← will format [`*.xml`, `*.bmml` and `*.owl`](/autoformat/xml.patterns) (Balsamiq Mockups, Protégé) files and any [file that is recognized as XML](/autoformat/xml.magic) by [libmagic](http://en.wikipedia.org/wiki/File_%28command%29),
 * [XMind](/autoformat/xmind) ← will format [`*.xmind/**.xml`](/autoformat/xmind.patterns) files (an `*.xmind` file is really a ZIP archive and **should be extracted**—and autoformatted—before being added to VCS; you can then open a mindmap using `$ XMind some/directory.xmind` and it will then be added to the recently opened maps list).
 
 Adding your own formatters
@@ -44,6 +44,7 @@ Adding your own formatters
 
 1. Take a look at the existing formatters above.
 2. Create `autoformat/NAME.patterns` file containing a regular expressions—1 per line—matching all file names to be treated with your `NAME` formatter.
+2. AND/OR create `autoformat/NAME.magic` file containing a regular expressions—1 per line—matching outputs of [libmagic](http://en.wikipedia.org/wiki/File_%28command%29)’s `/usr/bin/file "$FILE"` for all files to be treated with your `NAME` formatter.
 3. Create `autoformat/NAME` executable script. It might be called several times, but always with one argument, an absolute path to a file to format. When formatting, you've got to **modify this file in place**.
 4. If you want to abort the commit, print an error message and exit from the formatter with a non-zero exit code.
 
