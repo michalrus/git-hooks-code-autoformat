@@ -5,7 +5,7 @@ owndir="$(dirname "$(readlink -f "$0")")"
 echo "$1" | grep -qEi '\.xmind/(Thumbnails|Revisions)/' && rm "$1" && exit
 
 echo "$1" | grep -qEi '\.xml$' && {
-  "$owndir"/xml "$1"
+  "$owndir"/xml "$1" || exit $?
 
   [ "$(basename "$1")" = "content.xml" ] && {
     sed -r 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
@@ -32,5 +32,7 @@ echo "$1" | grep -qEi '\.xml$' && {
     sed -r '/full-path="Thumbnails\// d' -i "$1"
   }
 
-  "$owndir"/xml "$1"
+  "$owndir"/xml "$1" || exit $?
 }
+
+exit 0
