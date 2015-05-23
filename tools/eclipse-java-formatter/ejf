@@ -4,6 +4,8 @@ set -o noclobber
 set -o errexit
 set -o nounset
 
+[ "$#" -lt 1 ] && { echo >&2 'usage: ejf <file1.java> <file2.java> ...'; exit 3; }
+
 d="$(cd "$(dirname "$0")"; pwd -P)"
 
 cat "$d/lib/sources.list" | grep -Ev '^\s*(#|$)' | while IFS= read -r url ; do
@@ -25,4 +27,6 @@ if [ "$src" -nt "$cls" ] ; then
   touch -r "$src" "$cls"
 fi
 
-java -cp "$lib_classpath:$bin" ejf.Main "$@"
+style="$(find "$d/lib/" -name '*.xml' | head -n 1)"
+
+java -cp "$lib_classpath:$bin" ejf.Main "$style" "$@"

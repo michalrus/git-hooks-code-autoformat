@@ -2,9 +2,7 @@
 
 d="$(cd "$(dirname "$0")"; pwd -P)/../tools/eclipse-java-formatter"
 
-style="$(find "$d/lib/" -name '*.xml' | head -n 1)"
-
-"$d/ejf" "$style" "$1" || {
+"$d/ejf" "$1" || {
   echo 'fatal: `ejf` failed for:' "$1" >&2
   exit 1
 }
