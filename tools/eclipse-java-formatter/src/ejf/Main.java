@@ -24,7 +24,7 @@ public class Main {
 
     public static void main(final String[] args) {
         if (args.length < 2) {
-            System.err.println("usage: eclipse-formatter <style.xml> <file1.java> <file2.java> ...");
+            System.err.println("usage: ejf <style.xml> <file1.java> <file2.java> ...");
             System.exit(3);
         }
         boolean someFailed = false;
