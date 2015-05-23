@@ -9,8 +9,10 @@ import org.eclipse.text.edits.TextEdit;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,18 +25,23 @@ public class Main {
     public static void main(final String[] args) {
         if (args.length < 2) {
             System.err.println("usage: eclipse-formatter <style.xml> <file1.java> <file2.java> ...");
-            System.exit(1);
+            System.exit(3);
         }
         boolean someFailed = false;
-        final Formatter fm = new Formatter(args[0]);
-        for (final String f : Arrays.copyOfRange(args, 1, args.length))
-            try {
-                write(f, fm.format(read(f)));
-            } catch (Exception e) {
-                System.err.println(e.toString() + ": " + f);
-                someFailed = true;
-            }
-        if (someFailed) System.exit(2);
+        try {
+            final Formatter fm = new Formatter(args[0]);
+            for (final String f : Arrays.copyOfRange(args, 1, args.length))
+                try {
+                    write(f, fm.format(read(f)));
+                } catch (Exception e) {
+                    System.err.println(e.toString() + ": " + f);
+                    someFailed = true;
+                }
+            if (someFailed) System.exit(1);
+        } catch (Exception e) {
+            System.err.println(e.toString());
+            System.exit(2);
+        }
     }
 
     private static String read(final String path) throws IOException {
@@ -48,7 +55,7 @@ public class Main {
     private static class Formatter {
         private final CodeFormatter formatter;
 
-        public Formatter(final String xmlFile) {
+        public Formatter(final String xmlFile) throws IOException, SAXException, ParserConfigurationException {
             formatter = new DefaultCodeFormatter(props(xmlFile));
         }
 
@@ -63,10 +70,31 @@ public class Main {
             return doc.get();
         }
 
-        private static Properties props(final String xmlFile) {
-            return new Properties();
+        private static Properties props(final String xmlFile) throws ParserConfigurationException, IOException, SAXException {
+            Properties r = new Properties();
+
+            org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
+            doc.getDocumentElement().normalize();
+
+            NodeList profiles = doc.getElementsByTagName("profile");
+            if (profiles.getLength() != 1)
+                throw new RuntimeException("XML style should contain exactly one <profile/>: " + xmlFile);
+
+            Node profile = profiles.item(0);
+            if (profile.getNodeType() == Node.ELEMENT_NODE) {
+                NodeList settings = ((Element) profile).getElementsByTagName("setting");
+                for (int i = 0; i < settings.getLength(); i++) {
+                    Node setting = settings.item(i);
+                    if (setting.getNodeType() == Node.ELEMENT_NODE) {
+                        String id = ((Element) setting).getAttribute("id");
+                        String value = ((Element) setting).getAttribute("value");
+                        r.setProperty(id.trim(), value.trim());
+                    }
+                }
+            }
+
+            return r;
         }
     }
-
 
 }
