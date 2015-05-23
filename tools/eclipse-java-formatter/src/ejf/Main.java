@@ -6,10 +6,15 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -21,12 +26,14 @@ public class Main {
             System.exit(1);
         }
         boolean someFailed = false;
-        for (final String f : Arrays.copyOfRange(args, 1, args.length)) try {
-            write(f, format(props(args[0]), read(f)));
-        } catch (Exception e) {
-            System.err.println(e.toString() + ": " + f);
-            someFailed = true;
-        }
+        final Formatter fm = new Formatter(args[0]);
+        for (final String f : Arrays.copyOfRange(args, 1, args.length))
+            try {
+                write(f, fm.format(read(f)));
+            } catch (Exception e) {
+                System.err.println(e.toString() + ": " + f);
+                someFailed = true;
+            }
         if (someFailed) System.exit(2);
     }
 
@@ -38,20 +45,28 @@ public class Main {
         Files.write(Paths.get(path), content.getBytes());
     }
 
-    private static String format(final Properties options, final String input) throws BadLocationException {
-        final CodeFormatter formatter = new DefaultCodeFormatter(options);
-        final IDocument doc = new Document();
-        doc.set(input);
-        final TextEdit edit = formatter.format(
-                CodeFormatter.K_COMPILATION_UNIT | CodeFormatter.F_INCLUDE_COMMENTS,
-                input, 0, input.length(), 0, "\n");
-        if (edit == null) throw new RuntimeException("formatting failed");
-        edit.apply(doc);
-        return doc.get();
+    private static class Formatter {
+        private final CodeFormatter formatter;
+
+        public Formatter(final String xmlFile) {
+            formatter = new DefaultCodeFormatter(props(xmlFile));
+        }
+
+        public String format(final String input) throws BadLocationException {
+            final IDocument doc = new Document();
+            doc.set(input);
+            final TextEdit edit = formatter.format(
+                    CodeFormatter.K_COMPILATION_UNIT | CodeFormatter.F_INCLUDE_COMMENTS,
+                    input, 0, input.length(), 0, "\n");
+            if (edit == null) throw new RuntimeException("formatting failed");
+            edit.apply(doc);
+            return doc.get();
+        }
+
+        private static Properties props(final String xmlFile) {
+            return new Properties();
+        }
     }
 
-    private static Properties props(final String xmlFile) {
-        return new Properties();
-    }
 
 }
