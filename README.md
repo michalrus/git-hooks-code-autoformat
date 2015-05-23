@@ -36,6 +36,7 @@ If an error occurs (e.g. trying to format a not so well-formed XML), an error me
 [Existing formatters](/autoformat)
 -------------------
 
+* [Java](/autoformat/java) ← will format [`*.java`](/autoformat/java.patterns) files using a small wrapper—[eclipse-code-formatter](/tools/eclipse-java-formatter)—around [Eclipse’s `CodeFormatter`](http://help.eclipse.org/luna/topic/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/formatter/CodeFormatter.html) with [Google’s Java Style definition](https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml),
 * [XML](/autoformat/xml) ← will format [`*.xml`, `*.bmml` and `*.owl`](/autoformat/xml.patterns) (Balsamiq Mockups, Protégé) files and any [file that is recognized as XML](/autoformat/xml.magic) by [libmagic](http://en.wikipedia.org/wiki/File_%28command%29),
 * [XMind](/autoformat/xmind) ← will format [`*.xmind/**.xml`](/autoformat/xmind.patterns) files (an `*.xmind` file is really a ZIP archive and **should be extracted**—and autoformatted—before being added to VCS; you can then open a mindmap using `$ XMind some/directory.xmind` and it will then be added to the recently opened maps list).
 
