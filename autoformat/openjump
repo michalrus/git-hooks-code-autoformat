@@ -3,7 +3,7 @@
 root="$(git rev-parse --show-toplevel)"
 [ -d "$root" ] || exit 1
 
-owndir="$(dirname "$(readlink -f "$0")")"
+owndir="$(cd "$(dirname "$0")"; pwd -P)"
 
 beginswith() { case "$2" in "$1"*) true;; *) false;; esac; }
 checkfile() {

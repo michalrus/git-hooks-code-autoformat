@@ -1,6 +1,6 @@
 #!/bin/sh
 
-owndir="$(dirname "$(readlink -f "$0")")"
+owndir="$(cd "$(dirname "$0")"; pwd -P)"
 
 echo "$1" | grep -qEi '\.xmind/(Thumbnails|Revisions)/' && rm "$1" && exit
 

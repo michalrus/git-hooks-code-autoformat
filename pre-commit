@@ -3,7 +3,7 @@
 root="$(git rev-parse --show-toplevel)"
 [ -d "$root" ] || exit 1
 
-owndir="$(dirname "$(readlink -f "$0")")"
+owndir="$(cd "$(dirname "$0")"; pwd -P)"
 
 find "$owndir"/autoformat -type f -executable | {
   abort=0
