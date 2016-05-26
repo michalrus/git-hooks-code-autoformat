@@ -21,12 +21,30 @@ lib_classpath="$(find "$d/lib/" -name '*.jar' | tr '\n' ':')"
 src="$d/src/ejf/Main.java"
 bin="$d/bin"
 cls="$d/bin/ejf/Main.class"
-if [ "$src" -nt "$cls" ] ; then
-  echo "Recompiling $src ..."
-  javac -cp "$lib_classpath" -d "$bin" "$src"
-  touch -r "$src" "$cls"
-fi
-
 style="$(find "$d/lib/" -name '*.xml' | head -n 1)"
+os="$(uname -o)"
 
-java -cp "$lib_classpath:$bin" ejf.Main "$style" "$@"
+if [ "$os" == "Cygwin" ] ; then
+	echo "Setting windows dirs..."
+	srcW=src="$(echo "$src" | sed -e 's/\/cygdrive\/\(.\)/\1:\//g')"
+	bin="$(echo "$bin" | sed -e 's/\/cygdrive\/\(.\)/\1:\//g')"
+	style="$(echo "$style" | sed -e 's/\/cygdrive\/\(.\)/\1:\//g')"
+	lib_classpath="$(echo "$lib_classpath" | sed -e 's/:/;/g' -e 's/\/cygdrive\/\(.\)/\1:\//g')"
+	args="$(echo "$@" | sed -e 's/\/cygdrive\/\(.\)/\1:\//g')"
+	 
+	if [ "$src" -nt "$cls" ] ; then
+		echo "Recompiling $src ..."
+		javac -cp "$lib_classpath" -d "$bin" "$srcW"
+		touch -r "$src" "$cls"
+	fi
+
+	java -cp "$lib_classpath;$bin" ejf.Main "$style" "$args"
+else
+	if [ "$src" -nt "$cls" ] ; then
+	  echo "Recompiling $src ..."
+	  javac -cp "$lib_classpath" -d "$bin" "$src"
+	  touch -r "$src" "$cls"
+	fi
+
+	java -cp "$lib_classpath:$bin" ejf.Main "$style" "$@"
+fi
