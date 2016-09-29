@@ -1,0 +1,11 @@
+#!/bin/sh
+
+tmp="$(mktemp)"
+
+tsfmt "$1" >"$tmp" 2>/dev/null || {
+  echo 'fatal: `tsfmt` failed for:' "$1" >&2
+  exit 1
+}
+
+cat "$tmp" > "$1"
+rm "$tmp"
