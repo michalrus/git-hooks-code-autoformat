@@ -5,7 +5,15 @@ root="$(git rev-parse --show-toplevel)"
 
 owndir="$(cd "$(dirname "$0")"; pwd -P)"
 
-find "$owndir"/autoformat -type f -executable | {
+OS_NAME=$(uname)
+
+if [ "$OS_NAME" == "Darwin" ]; then
+  FIND_ARGS="-perm +0111"
+else
+  FIND_ARGS="-executable"
+fi
+
+find "$owndir"/autoformat -type f $FIND_ARGS | {
   abort=0
 
   while read formatter ; do
