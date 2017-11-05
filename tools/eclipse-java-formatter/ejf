@@ -9,7 +9,7 @@ set -o nounset
 d="$(cd "$(dirname "$0")"; pwd -P)"
 
 cat "$d/lib/sources.list" | grep -Ev '^\s*(#|$)' | while IFS= read -r url ; do
-  file="$d/lib/$(echo "$url" | sed -re 's/^.*\/([^\/]+)$/\1/')"
+  file="$d/lib/$(echo "$url" | sed -Ee 's/^.*\/([^\/]+)$/\1/')"
   if [ ! -f "$file" ] ; then
     echo "$url"
     curl -f -L -# -o "$file" "$url" || { rm "$file"; exit 1; }

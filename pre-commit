@@ -7,7 +7,7 @@ owndir="$(cd "$(dirname "$0")"; pwd -P)"
 
 OS_NAME=$(uname)
 
-if [ "$OS_NAME" == "Darwin" ]; then
+if [ "$OS_NAME" = "Darwin" ]; then
   FIND_ARGS="-perm +0111"
 else
   FIND_ARGS="-executable"

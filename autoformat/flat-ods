@@ -4,11 +4,11 @@ owndir="$(cd "$(dirname "$0")"; pwd -P)"
 
 "$owndir"/xml "$1" || exit $?
 
-sed -r '/<office:meta>/,/<\/office:meta>/ d' -i "$1" || exit $?
-sed -r '/<office:settings>/,/<\/office:settings>/ d' -i "$1" || exit $?
-sed -r '/<office:scripts>/,/<\/office:scripts>/ d' -i "$1" || exit $?
-sed -r '/<office:master-styles>/,/<\/office:master-styles>/ d' -i "$1" || exit $?
-sed -r '/<style:page-layout/,/<\/style:page-layout>/ d' -i "$1" || exit $?
+sed -E '/<office:meta>/,/<\/office:meta>/ d' -i "$1" || exit $?
+sed -E '/<office:settings>/,/<\/office:settings>/ d' -i "$1" || exit $?
+sed -E '/<office:scripts>/,/<\/office:scripts>/ d' -i "$1" || exit $?
+sed -E '/<office:master-styles>/,/<\/office:master-styles>/ d' -i "$1" || exit $?
+sed -E '/<style:page-layout/,/<\/style:page-layout>/ d' -i "$1" || exit $?
 
 "$owndir"/xml "$1" || exit $?
 

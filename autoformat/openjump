@@ -14,9 +14,9 @@ checkfile() {
 
 # check all referenced files
 {
-  cat "$1" | grep -A1 -F '<key class="javax.xml.namespace.QName">Project File</key>' | grep -F '<value class="java.lang.String">' | sed -r 's/^.*>(.*)<.*$/\1/'
-  cat "$1" | grep -A1 -F '<key class="java.lang.String">File</key>'                  | grep -F '<value class="java.lang.String">' | sed -r 's/^.*>(.*)<.*$/\1/'
-  cat "$1" | grep -F '<query>' | grep -F '</query>'                                                                               | sed -r 's/^.*>(.*)<.*$/\1/'
+  cat "$1" | grep -A1 -F '<key class="javax.xml.namespace.QName">Project File</key>' | grep -F '<value class="java.lang.String">' | sed -E 's/^.*>(.*)<.*$/\1/'
+  cat "$1" | grep -A1 -F '<key class="java.lang.String">File</key>'                  | grep -F '<value class="java.lang.String">' | sed -E 's/^.*>(.*)<.*$/\1/'
+  cat "$1" | grep -F '<query>' | grep -F '</query>'                                                                               | sed -E 's/^.*>(.*)<.*$/\1/'
 } | {
   failed=0
   while IFS= read -r file ; do
@@ -32,11 +32,11 @@ checkfile() {
 
 sed -i "$1" -e 's/'"$(echo "$root/" | sed -e 's/[]\/$*.^|[]/\\&/g')"'/.\//g'
 
-sed -r '/<windowLocation / d' -i "$1"
-sed -r '/<windowSize / d' -i "$1"
-sed -r '/<windowZoom / d' -i "$1"
-sed -r '/<maximized>(true|false)<\/maximized>/ d' -i "$1"
-sed -r 's/<([^>]*)editable="(true|false)"([^>]*)>/<\1\3>/ig' -i "$1"
-sed -r 's/<([^>]*)selectable="(true|false)"([^>]*)>/<\1\3>/ig' -i "$1"
+sed -E '/<windowLocation / d' -i "$1"
+sed -E '/<windowSize / d' -i "$1"
+sed -E '/<windowZoom / d' -i "$1"
+sed -E '/<maximized>(true|false)<\/maximized>/ d' -i "$1"
+sed -E 's/<([^>]*)editable="(true|false)"([^>]*)>/<\1\3>/ig' -i "$1"
+sed -E 's/<([^>]*)selectable="(true|false)"([^>]*)>/<\1\3>/ig' -i "$1"
 
 "$owndir"/xml "$1"

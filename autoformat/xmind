@@ -8,28 +8,28 @@ echo "$1" | grep -qEi '\.xml$' && {
   "$owndir"/xml "$1" || exit $?
 
   [ "$(basename "$1")" = "content.xml" ] && {
-    sed -r 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
-    sed -r 's/<([^>]*)branch="folded"([^>]*)>/<\1\2>/ig'    -i "$1"
+    sed -E 's/<([^>]*)timestamp="[0-9]+"([^>]*)>/<\1\2>/ig' -i "$1"
+    sed -E 's/<([^>]*)branch="folded"([^>]*)>/<\1\2>/ig'    -i "$1"
   }
 
   [ "$(basename "$1")" = "meta.xml" ] && {
-    sed -r 's/<([XY])>[0-9]+<\/\1>/<\1>0<\/\1>/g' -i "$1"
-    sed -r '/<Version>.*<\/Version>/ d' -i "$1"
+    sed -E 's/<([XY])>[0-9]+<\/\1>/<\1>0<\/\1>/g' -i "$1"
+    sed -E '/<Version>.*<\/Version>/ d' -i "$1"
 
-    sed -r '/<Configurations\/>/ d' -i "$1"
+    sed -E '/<Configurations\/>/ d' -i "$1"
 
     grep -qE '<AutoRevisionGeneration>No</AutoRevisionGeneration>' "$1" || {
-      grep -qE '<AutoRevisionGeneration>' "$1" && sed -r 's/^.*<AutoRevisionGeneration>.*$/<AutoRevisionGeneration>No<\/AutoRevisionGeneration>/g' -i "$1" || {
-        grep -qE '<Configurations>' "$1" && sed -r '/<Configurations>/ a <AutoRevisionGeneration>No</AutoRevisionGeneration>' -i "$1" || {
-          sed -r '/<\/meta>/ i <Configurations><AutoRevisionGeneration>No</AutoRevisionGeneration></Configurations>' -i "$1"
+      grep -qE '<AutoRevisionGeneration>' "$1" && sed -E 's/^.*<AutoRevisionGeneration>.*$/<AutoRevisionGeneration>No<\/AutoRevisionGeneration>/g' -i "$1" || {
+        grep -qE '<Configurations>' "$1" && sed -E '/<Configurations>/ a <AutoRevisionGeneration>No</AutoRevisionGeneration>' -i "$1" || {
+          sed -E '/<\/meta>/ i <Configurations><AutoRevisionGeneration>No</AutoRevisionGeneration></Configurations>' -i "$1"
         }
       }
     }
   }
 
   [ "$(basename "$1")" = "manifest.xml" ] && {
-    sed -r '/full-path="Revisions\// d' -i "$1"
-    sed -r '/full-path="Thumbnails\// d' -i "$1"
+    sed -E '/full-path="Revisions\// d' -i "$1"
+    sed -E '/full-path="Thumbnails\// d' -i "$1"
   }
 
   "$owndir"/xml "$1" || exit $?
