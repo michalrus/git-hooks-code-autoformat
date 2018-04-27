@@ -37,7 +37,7 @@ find "$owndir"/autoformat -type f $FIND_ARGS | {
         # file’s libmagic output matches
         match_magic=''
         [ $match_pattern ] || {
-          [ -f "$magic" ] && file "$orig" | grep -Eqif "$magic" && match_magic='1'
+          [ -f "$magic" ] && file -b "$orig" | grep -Eqif "$magic" && match_magic='1'
         }
 
         # if none, ignore
