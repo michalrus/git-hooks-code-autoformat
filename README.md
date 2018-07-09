@@ -23,6 +23,8 @@ What's left is to symlink `$PROJECT/.git/hooks` to `$PROJECT/git-hooks`:
 
 **IMPORTANT**: this linking step **has to** be done **manually** by **every developer**.
 
+**IMPORTANT**: for **Windows** users, due to limitations on Windows shell emulators, links seem to be implemented more often than not as 'copy', so any time the git-hooks directory is updated, the linking step needs to be re-done.
+
 The usual workflow then is:
 
 1. Modify some files.

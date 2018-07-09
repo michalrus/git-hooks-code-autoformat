@@ -16,7 +16,13 @@ cat "$d/lib/sources.list" | grep -Ev '^\s*(#|$)' | while IFS= read -r url ; do
   fi
 done
 
-lib_classpath="$(find "$d/lib/" -name '*.jar' | tr '\n' ':')"
+os="$(uname -s)"
+case "${os}" in
+  CYGWIN*)	sep=";";;
+  *)		sep=":";;
+esac
+
+lib_classpath="$(find "$d/lib/" -name '*.jar' | tr '\n' $sep)"
 
 src="$d/src/ejf/Main.java"
 bin="$d/bin"
@@ -29,4 +35,4 @@ fi
 
 style="$(find "$d/lib/" -name '*.xml' | head -n 1)"
 
-java -cp "$lib_classpath:$bin" ejf.Main "$style" "$@"
+java -cp "$lib_classpath$bin" ejf.Main "$style" "$@"
