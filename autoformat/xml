@@ -4,6 +4,7 @@ tmp="$(mktemp)"
 
 xmllint --format "$1" >"$tmp" 2>/dev/null || {
   echo 'fatal: `xmllint --format` failed for:' "$1" >&2
+  rm "$tmp"
   exit 1
 }
 
