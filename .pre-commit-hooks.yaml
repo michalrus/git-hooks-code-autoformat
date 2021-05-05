@@ -1,0 +1,7 @@
+-   id: formatter
+    name: autoformatter
+    description: formats files on commit
+    entry: pre-commit
+    language: script
+    always_run: true
+    pass_filenames: false
